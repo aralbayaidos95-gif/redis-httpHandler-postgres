@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"study/internal/models"
 	"study/internal/storage"
 )
@@ -15,12 +16,17 @@ func NewService(s *storage.Storage) *Service {
 }
 
 func (s Service) CreatUser(ctx context.Context, user models.User) error {
-	_, err := s.storage.DB.Exec(
-		ctx,
-		"INSERT INTO users (name, age) VALUES ($1,$2) ",
-		user.Name,
-		user.Age,
-	)
+	if user.Name == "" {
+		return fmt.Errorf("user.Name is empty")
+	}
+	if user.Age < 0 {
+		return fmt.Errorf("user.Age is negative")
+	}
+
+	err := s.storage.CreateUser(ctx, user)
+	if err != nil {
+		return fmt.Errorf("storage.CreateUser: %w", err)
+	}
 
 	return err
 }
