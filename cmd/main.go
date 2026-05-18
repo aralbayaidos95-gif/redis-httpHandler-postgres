@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	connStr := "postgres://postgres:2055@localhost:5432/mydb"
+	connStr := "postgres://postgres:2055@localhost:5432/postgres"
 
 	store, err := storage.NewStorage(connStr)
 
@@ -27,5 +27,7 @@ func main() {
 	http.HandleFunc("/user/delete", handler.DeleteUser)
 	http.HandleFunc("/user/put", handler.PutUser)
 
-	http.ListenAndServe("8080", nil)
+	if err := http.ListenAndServe(":8081", nil); err != nil {
+		log.Fatal("error http listen and serve", err)
+	}
 }
