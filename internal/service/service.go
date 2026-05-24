@@ -9,10 +9,14 @@ import (
 
 type Service struct {
 	storage *storage.Storage
+	redis   *storage.Redis
 }
 
-func NewService(s *storage.Storage) *Service {
-	return &Service{storage: s}
+func NewService(s *storage.Storage, r *storage.Redis) *Service {
+	return &Service{
+		storage: s,
+		redis:   r,
+	}
 }
 
 func (s Service) CreatUser(ctx context.Context, user models.User) error {
@@ -28,7 +32,7 @@ func (s Service) CreatUser(ctx context.Context, user models.User) error {
 		return fmt.Errorf("storage.CreateUser: %w", err)
 	}
 
-	return err
+	return s.redis.SaveUser(user)
 }
 
 func (s Service) GetUsers(ctx context.Context) ([]models.User, error) {
@@ -53,7 +57,7 @@ func (s Service) DeleteUser(ctx context.Context, name string) error {
 		return fmt.Errorf("storage.DeleteUser: %w", err)
 	}
 
-	return err
+	return s.redis.DeleteUser(name)
 }
 
 func (s Service) UpdateUser(ctx context.Context, user models.User) error {

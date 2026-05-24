@@ -22,7 +22,7 @@ func (h *Handler) PostUsers(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&user)
 
 	if err := h.svc.CreatUser(context.Background(), user); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), 500)
 		return
 	}
 

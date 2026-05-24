@@ -17,8 +17,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	connStr = "127.0.0.1:6379"
 
-	svc := service.NewService(store)
+	redis := storage.NewRedis(connStr)
+
+	svc := service.NewService(store, redis)
 
 	handler := http_handler.NewHandler(svc)
 

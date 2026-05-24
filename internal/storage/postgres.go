@@ -68,7 +68,7 @@ func (s *Storage) DeleteUser(ctx context.Context, name string) error {
 
 func (s *Storage) UpdateUser(ctx context.Context, user models.User) error {
 	_, err := s.DB.Exec(ctx,
-		"UPDATE users SET age=$1,WHERE name=$2",
+		"UPDATE users SET age=$1 WHERE name=$2",
 		user.Age,
 		user.Name,
 	)
