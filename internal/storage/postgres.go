@@ -35,6 +35,22 @@ func (s *Storage) CreateUser(ctx context.Context, user models.User) error {
 	return nil
 }
 
+func (s *Storage) GetUser(ctx context.Context, name string) (models.User, error) {
+	var user models.User
+
+	err := s.DB.QueryRow(
+		ctx,
+		"SELECT name, age FROM users WHERE name=$1",
+		name,
+	).Scan(&user.Name, &user.Age)
+
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 func (s *Storage) GetUsers(ctx context.Context) ([]models.User, error) {
 	rows, err := s.DB.Query(
 		ctx,

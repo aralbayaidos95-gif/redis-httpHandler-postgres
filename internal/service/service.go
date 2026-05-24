@@ -35,6 +35,29 @@ func (s Service) CreatUser(ctx context.Context, user models.User) error {
 	return s.redis.SaveUser(user)
 }
 
+func (s Service) GetUser(ctx context.Context, name string) (models.User, error) {
+	user, err := s.redis.GetUser(name)
+
+	if err == nil {
+		fmt.Println("user from redis")
+		return user, nil
+	}
+
+	user, err = s.storage.GetUser(ctx, name)
+	if err != nil {
+		return user, err
+	}
+
+	err = s.redis.SaveUser(user)
+	if err != nil {
+		return user, err
+	}
+
+	fmt.Println("user from postgres")
+
+	return user, nil
+}
+
 func (s Service) GetUsers(ctx context.Context) ([]models.User, error) {
 	users, err := s.storage.GetUsers(ctx)
 
@@ -74,5 +97,5 @@ func (s Service) UpdateUser(ctx context.Context, user models.User) error {
 		return fmt.Errorf("storage.UpdateUser: %w", err)
 	}
 
-	return err
+	return s.redis.SaveUser(user)
 }

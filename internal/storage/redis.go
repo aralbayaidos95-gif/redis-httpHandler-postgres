@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"study/internal/models"
 	"time"
 
@@ -29,6 +30,24 @@ func (r *Redis) SaveUser(user models.User) error {
 	}
 
 	return r.RDB.Set(context.Background(), user.Name, data, time.Minute*5).Err()
+}
+
+func (r *Redis) GetUser(name string) (models.User, error) {
+	var user models.User
+
+	data, err := r.RDB.Get(context.Background(), name).Result()
+
+	if err != nil {
+		return user, errors.New("user not found in redis")
+	}
+
+	err = json.Unmarshal([]byte(data), &user)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+
 }
 
 func (r *Redis) DeleteUser(name string) error {

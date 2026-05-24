@@ -27,6 +27,7 @@ func main() {
 
 	http.HandleFunc("/user/post", handler.PostUsers)
 	http.HandleFunc("/user/get", handler.GetUser)
+	http.HandleFunc("/user/get/all", handler.GetUsers)
 	http.HandleFunc("/user/delete", handler.DeleteUser)
 	http.HandleFunc("/user/put", handler.PutUser)
 
