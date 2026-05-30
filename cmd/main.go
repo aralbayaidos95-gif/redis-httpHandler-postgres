@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"study/internal/http_handler"
 	"study/internal/service"
 	"study/internal/storage"
@@ -10,16 +11,15 @@ import (
 
 func main() {
 
-	connStr := "postgres://postgres:2055@localhost:5432/postgres"
+	CONN_STR := os.Getenv("CONN_STR")
+	CONN_STR_RDB := os.Getenv("CONN_STR_RDB")
 
-	store, err := storage.NewStorage(connStr)
+	store, err := storage.NewStorage(CONN_STR)
+	redis := storage.NewRedis(CONN_STR_RDB)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-	connStr = "127.0.0.1:6379"
-
-	redis := storage.NewRedis(connStr)
 
 	svc := service.NewService(store, redis)
 
